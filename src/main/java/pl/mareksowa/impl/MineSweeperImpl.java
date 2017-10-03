@@ -8,10 +8,11 @@ public class MineSweeperImpl implements IMineSweeper {
     private String[][] multiMineFields;
     private int row;
     private int element;
-    private int nearestMines;
 
 //        Example mine-field string (as input to setMineField()): "*...\n..*.\n...."
 //        * (a 3 x 4 mine-field of 12 squares, 2 of which are mines)
+
+    //public method from interface
     public void setMineField(String mineField) throws IllegalArgumentException {
         //initialing variables
         numberOfRows = 0;
@@ -19,7 +20,6 @@ public class MineSweeperImpl implements IMineSweeper {
         multiMineFields = null;
         row = 0;
         element = 0;
-        nearestMines = 0;
 
         //check if mineFields contains rows
         if (!mineField.contains("\n")){
@@ -59,6 +59,7 @@ public class MineSweeperImpl implements IMineSweeper {
     12*1
     0111
 */
+    //public method from interface
     public String getHintField() throws IllegalArgumentException {
         StringBuilder hintField = new StringBuilder();
 
@@ -81,15 +82,15 @@ public class MineSweeperImpl implements IMineSweeper {
                     hintField.append("*");
                 } else{
                 //check if around mine appear (8 fields around)
-                    nearestMines = 0;
-                    checkIfMineIsAdjacent(-1, -1);
-                    checkIfMineIsAdjacent(-1, 0);
-                    checkIfMineIsAdjacent(-1, +1);
-                    checkIfMineIsAdjacent(0, -1);
-                    checkIfMineIsAdjacent(0, +1);
-                    checkIfMineIsAdjacent(+1, -1);
-                    checkIfMineIsAdjacent(+1, 0);
-                    checkIfMineIsAdjacent(+1, +1);
+                    int nearestMines = 0;
+                    nearestMines+=checkIfMineIsAdjacent(-1, -1);
+                    nearestMines+=checkIfMineIsAdjacent(-1, 0);
+                    nearestMines+=checkIfMineIsAdjacent(-1, +1);
+                    nearestMines+=checkIfMineIsAdjacent(0, -1);
+                    nearestMines+=checkIfMineIsAdjacent(0, +1);
+                    nearestMines+=checkIfMineIsAdjacent(+1, -1);
+                    nearestMines+=checkIfMineIsAdjacent(+1, 0);
+                    nearestMines+=checkIfMineIsAdjacent(+1, +1);
                     hintField.append(String.valueOf(nearestMines));
                 }
             }
@@ -97,32 +98,30 @@ public class MineSweeperImpl implements IMineSweeper {
         return hintField.toString();
     }
 
-    public boolean isFieldRowContainsCorrectedData(String singleFieldsRow){
+    private boolean isFieldRowContainsCorrectedData(String singleFieldsRow){
         char[] array = singleFieldsRow.toCharArray();
         for (char element : array) {
-            if (element=='.'){
-                continue;
-            } else if (element=='*'){
-                continue;
-            } else {
+            if (element!='.' && element!='*'){
+                System.out.println(element);
                 return false;
             }
         }
         return true;
     }
 
-    public void checkIfMineIsAdjacent(int rowShift, int elementShift){
+    private int checkIfMineIsAdjacent(int rowShift, int elementShift){
         //check if row are beyond bounds
         if ((row+rowShift) >= multiMineFields.length || (row+rowShift) < 0){
             //row index beyond array
-            return;
+            return 0;
         } else if ((element+elementShift) >= multiMineFields[(row)].length || (element+elementShift) < 0){
             //element index out of array
-            return;
+            return 0;
         } else {
             if (multiMineFields[row+rowShift][element+elementShift].equals("*")){
-                nearestMines++;
+                return 1;
             }
         }
+        return 0;
     }
 }
